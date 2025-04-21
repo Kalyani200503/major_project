@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Resume Screening</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="main-container">
+        <h1>Automated Resume Screening</h1>
+
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="flash-messages">
+                    {% for message in messages %}
+                        <div class="flash-message">{{ message }}</div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <form id="uploadForm" action="/process" method="POST" enctype="multipart/form-data">
+            <div class="upload-box">
+                <label for="fileUpload" class="upload-label">Choose your resume dataset (CSV/XLSX)</label>
+                <input type="file" id="fileUpload" name="file" accept=".csv, .xlsx" required>
+            </div>
+
+            <div class="job-details">
+                <div class="role-select">
+                    <label for="role">Select Role:</label>
+                    <select id="role" name="role" required>
+                        <option value="">Select a role...</option>
+                        <option value="data_scientist">Data Scientist</option>
+                        <option value="software_engineer">Software Engineer</option>
+                        <option value="data_analyst">Data Analyst</option>
+                        <option value="web_developer">Web Developer</option>
+                        <option value="machine_learning">Machine Learning Engineer</option>
+                        <option value="custom">Custom Role</option>
+                    </select>
+                </div>
+
+                <div class="job-description">
+                    <label for="jobDescription">Job Description:</label>
+                    <textarea id="jobDescription" name="job_description" rows="4" required 
+                        placeholder="Enter the job description or requirements..."></textarea>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button type="button" class="upload-btn" onclick="document.getElementById('fileUpload').click()">Upload</button>
+                <button type="submit" class="analyze-btn">Analyze</button>
+            </div>
+        </form>
+
+        {% if result %}
+        <div class="output-box">
+            <h2>Screening Results</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Candidate</th>
+                        <th>ATS Score</th>
+                        <th>Rank</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in result %}
+                    <tr>
+                        <td>{{ row['Candidate'] }}</td>
+                        <td>{{ row['ATS_Score'] }}</td>
+                        <td>{{ row['Rank'] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html> 
